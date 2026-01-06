@@ -78,7 +78,7 @@ const initialNodes: TaskNode[] = [
   {
     id: 'root',
     type: 'task',
-    position: { x: 0, y: 0 },
+    position: { x: 50, y: 150 },
     data: { label: 'Main Goal', status: 'pending' as const },
     deletable: false,
   },
@@ -125,7 +125,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
         const page = state.pages.find(p => p.id === state.activePageId);
         if (!page) return state;
         
-        const newEdge = { ...connection, type: 'default', style: { strokeWidth: 2, stroke: '#888' } }; 
+        const newEdge = { ...connection, type: 'default', style: { strokeWidth: 2, stroke: '#888', strokeDasharray: 'none' } }; 
         const newEdges = addEdge(newEdge, page.edges);
         const newPages = state.pages.map(p => p.id === state.activePageId ? { ...p, edges: newEdges } : p);
         
@@ -146,7 +146,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       const page = state.pages.find(p => p.id === state.activePageId);
       if (!page) return state;
       // Ensure default style
-      const styledEdge = { ...edge, style: { strokeWidth: 2, stroke: '#888', ...edge.style } };
+      const styledEdge = { ...edge, style: { strokeWidth: 2, stroke: '#888', strokeDasharray: 'none', ...edge.style } };
       const newPages = state.pages.map(p => p.id === state.activePageId ? { ...p, edges: [...p.edges, styledEdge] } : p);
       return { pages: newPages };
   }),
@@ -223,7 +223,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       const rootNode: TaskNode = {
           id: `root-${id}`,
           type: 'task',
-          position: { x: 0, y: 0 },
+          position: { x: 50, y: 150 },
           data: { label: name, status: 'pending' as const },
           deletable: false,
       };
