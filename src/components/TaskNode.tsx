@@ -46,18 +46,23 @@ export function TaskNode({ id, data, selected }: NodeProps<TaskNodeType>) {
   const typeColor = currentType?.color || 'hsl(var(--primary))';
   
   const isCompleted = data.status === 'completed';
+  const isBlocked = data.isBlocked; // Read new property
   const isMatch = searchQuery && data.label.toLowerCase().includes(searchQuery.toLowerCase());
-  const isDimmed = searchQuery && !isMatch;
+  const isDimmed = (searchQuery && !isMatch);
 
   return (
     <motion.div
       initial={{ scale: 0.9, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ duration: 0.3 }}
+      data-blocked={isBlocked}
       className={cn(
         "group relative min-w-[50px] h-full rounded-xl border bg-card px-4 py-3 shadow-sm transition-shadow",
         selected && "ring-2",
-        isCompleted && "opacity-60 grayscale",
+        // Completed: Colored overall (remove grayscale), maybe slightly darker/tinted
+        isCompleted && "bg-muted/50 border-primary/50",
+        // Blocked: Dimmed/Thin
+        isBlocked && "opacity-40 border-dashed",
         isMatch && "ring-2 ring-yellow-400 bg-yellow-50/50",
         isDimmed && "opacity-30"
       )}

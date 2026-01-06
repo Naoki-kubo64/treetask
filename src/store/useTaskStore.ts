@@ -20,10 +20,14 @@ export interface TaskType {
   color: string;
 }
 
+export type TaskStatus = 'pending' | 'completed';
+
 export interface TaskData {
   label: string;
-  status: 'pending' | 'completed';
   description?: string;
+  status: TaskStatus;
+  isBlocked?: boolean; // New property for "Future/Unreachable" status
+  priority?: 'low' | 'medium' | 'high';
   typeId?: string;
   [key: string]: unknown;
 }
@@ -185,13 +189,17 @@ export const useTaskStore = create<TaskState>()(persist(temporal((set, get) => (
         return { pages: newPages };
     }),
 
-  toggleNodeStatus: (id) =>
+  toggleNodeStatus: (nodeId) => {
     set((state) => {
-        const page = state.pages.find(p => p.id === state.activePageId);
-        if (!page) return state;
-        
-        const newNodes = page.nodes.map((node) =>
-        node.id === id
+      const page = state.pages.find(p => p.id === state.activePageId);
+      if (!page) return state;
+
+      let currentNodes = page.nodes;
+      const currentEdges = page.edges;
+
+      // 1. Toggle status of the target node
+      const updatedNodesAfterStatusToggle = currentNodes.map((node) =>
+        node.id === nodeId
           ? {
               ...node,
               data: {
@@ -200,10 +208,49 @@ export const useTaskStore = create<TaskState>()(persist(temporal((set, get) => (
               },
             }
           : node
-        );
-        const newPages = state.pages.map(p => p.id === state.activePageId ? { ...p, nodes: newNodes } : p);
-        return { pages: newPages };
-    }),
+      );
+
+      // 2. Recalculate 'isBlocked' for ALL nodes based on new statuses
+      // A node is BLOCKED if it has parents AND at least one parent is PENDING.
+      // Root nodes (no parents) are never blocked.
+      
+      // Map of NodeID -> Status
+      const statusMap = new Map<string, TaskStatus>();
+      updatedNodesAfterStatusToggle.forEach(n => statusMap.set(n.id, n.data.status));
+
+      // Map of NodeID -> IncomingEdges[] (parent IDs)
+      const incomingEdgesMap = new Map<string, string[]>();
+      updatedNodesAfterStatusToggle.forEach(n => incomingEdgesMap.set(n.id, [])); // Initialize all nodes
+      currentEdges.forEach(e => {
+          const list = incomingEdgesMap.get(e.target);
+          if (list) list.push(e.source);
+      });
+
+      // Update isBlocked for all nodes
+      const finalNodes = updatedNodesAfterStatusToggle.map((node) => {
+          const parents = incomingEdgesMap.get(node.id) || [];
+          let newIsBlocked: boolean | undefined = node.data.isBlocked;
+
+          if (parents.length === 0) {
+              // Root node: never blocked
+              newIsBlocked = false;
+          } else {
+              // Check if any parent is pending
+              const anyParentPending = parents.some(pid => statusMap.get(pid) === 'pending');
+              newIsBlocked = anyParentPending;
+          }
+          
+          // Only update if the value actually changes
+          if (node.data.isBlocked !== newIsBlocked) {
+              return { ...node, data: { ...node.data, isBlocked: newIsBlocked } };
+          }
+          return node;
+      });
+
+      const newPages = state.pages.map(p => p.id === state.activePageId ? { ...p, nodes: finalNodes } : p);
+      return { pages: newPages };
+    });
+  },
     
   deleteNode: (id) =>
       set((state) => {

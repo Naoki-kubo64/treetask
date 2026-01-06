@@ -211,6 +211,25 @@
   max-width: 300px !important;
 }
 
+/* Pixel Skin: Blocked (Future) Tasks */
+[data-skin="pixel"] .react-flow__node:has([data-blocked="true"]) {
+    opacity: 0.5 !important;
+    border-style: dashed !important;
+    box-shadow: none !important;
+}
+
+/* Pixel Skin: Completed Tasks */
+/* "More colored" -> Invert for high contrast impact */
+[data-skin="pixel"] .react-flow__node:has(.bg-muted\/50) {
+    background-color: #e0e0e0 !important; /* Light Grey */
+    box-shadow: 2px 2px 0px black !important; /* Pressed down effect */
+    transform: translate(4px, 4px);
+}
+/* If purely completed check */
+[data-skin="pixel"] .react-flow__node:has([data-blocked="false"]) .text-green-500 {
+    /* Enhance checkmark visibility */
+}
+
 [data-skin="pixel"] .react-flow__handle {
   width: 8px !important;
   height: 8px !important;
