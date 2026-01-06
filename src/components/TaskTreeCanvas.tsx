@@ -16,6 +16,7 @@ import { TaskNode } from './TaskNode';
 import { useCallback, useState } from 'react';
 import { EdgeCustomizer } from './EdgeCustomizer';
 import { HistoryControls } from './HistoryControls';
+import { SkinSwitcher } from './SkinSwitcher';
 import { Edge, Connection } from '@xyflow/react';
 
 const nodeTypes = {
@@ -243,8 +244,9 @@ export function TaskTreeCanvas() {
             />
         )}
 
-        <Panel position="top-right">
+        <Panel position="top-right" className="flex gap-2">
             <HistoryControls />
+            <SkinSwitcher />
         </Panel>
 
         <Panel position="top-left" className="bg-card/80 backdrop-blur p-2 rounded-lg border shadow-sm flex gap-2">
