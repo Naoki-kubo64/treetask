@@ -52,7 +52,7 @@ export function TaskNode({ id, data, selected }: NodeProps<TaskNodeType>) {
       animate={{ scale: 1, opacity: 1 }}
       transition={{ duration: 0.3 }}
       className={cn(
-        "group relative min-w-[200px] h-full rounded-xl border bg-card px-4 py-3 shadow-sm transition-shadow",
+        "group relative min-w-[50px] h-full rounded-xl border bg-card px-4 py-3 shadow-sm transition-shadow",
         selected && "ring-2",
         isCompleted && "opacity-60 grayscale"
       )}
@@ -68,8 +68,8 @@ export function TaskNode({ id, data, selected }: NodeProps<TaskNodeType>) {
       <NodeResizer 
          color={typeColor} 
          isVisible={selected} 
-         minWidth={100} 
-         minHeight={50} 
+         minWidth={50} 
+         minHeight={30} 
          handleStyle={{ width: 8, height: 8, borderRadius: 4 }}
       />
       <Handle type="target" position={Position.Left} className="!bg-muted-foreground/50 w-3 h-3" />
