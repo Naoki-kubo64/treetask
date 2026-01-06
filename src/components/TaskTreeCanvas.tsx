@@ -19,6 +19,7 @@ import { HistoryControls } from './HistoryControls';
 import { SkinSwitcher } from './SkinSwitcher';
 import { Edge, Connection } from '@xyflow/react';
 import { InfoDialog } from './InfoDialog';
+import { LanguageSwitcher } from './LanguageSwitcher';
 import { useLocale } from '@/hooks/useLocale';
 
 const nodeTypes = {
@@ -144,10 +145,11 @@ export function TaskTreeCanvas() {
     setIsDragging(true);
   }, [setIsDragging]);
 
-  const onNodeDragStop = useCallback((event: React.MouseEvent, node: TaskNodeType) => { // Use Node type
+  const onNodeDragStop = useCallback((event: React.MouseEvent, node: TaskNodeType) => {
       setIsDragging(false);
       
-      // Check collision with other nodes
+      // Check collision with other nodes for reparenting
+      // Target (Parent) -> Node (Child)
       const targetNode = nodes.find(n =>
           n.id !== node.id &&
           n.position.x < node.position.x + 100 &&
@@ -157,61 +159,30 @@ export function TaskTreeCanvas() {
       );
 
       if (targetNode) {
-          // Reparent: remove all incoming edges to 'node', add new edge targetNode -> node
-          // Check if we are creating a cycle or self-loop
+          // Reparenting: 
+          // 1. Check if connecting to itself (prevent self-loop)
           if (targetNode.id === node.id) return;
 
-          // Remove old parent edges
-          const incomingEdges = edges.filter(e => e.target === node.id);
-          incomingEdges.forEach(e => {
-              // We need a helper to delete edge by Id, but removeEdge in store logic relies on object usually or filtering.
-              // Let's use deleteNode logic? No that deletes node.
-              // We don't have explicit deleteEdge action but 'onEdgesChange' can handle removals.
-              // Better to add 'reparentNode(childId, newParentId)' to store?
-              // For now, let's use context 'onEdgesChange' with 'type: remove'
-          });
+          // 2. Find existing parent connection
+          const incomingEdge = edges.find(e => e.target === node.id);
 
-          // Actually, let's just use connect. React Flow might handle multi-parents if not restricted.
-          // User wants "reparenting", implies single parent usually in tree.
+          // 3. If already connected to this parent, do nothing
+          if (incomingEdge && incomingEdge.source === targetNode.id) return;
 
-          // Let's assume tree: single parent.
-          // We need to remove *existing* incoming edge.
-          const oldEdge = edges.find(e => e.target === node.id);
-
-          // Prevent cycle? (A->B->A).
-          // Simple check: is targetNode a descendant of node?
-          // Skipping complex cycle check for now.
-
-          if (oldEdge) {
-              // If already connected to target, do nothing
-              if (oldEdge.source === targetNode.id) return;
-
-              // Remove old edge using generic change
-              // Store doesn't expose deleteEdge directly but we have onEdgesChange.
-              // It expects 'EdgeChange[]'.
-               // We will implement `reparentNode` in store for cleanliness later,
-               // but for now let's hack it: Delete old edge, add new.
-               // We need `deleteEdge` action in store.
-               // Use `updatePage`?
-               // Let's rely on user manually deleting for now? No, drag & drop implies auto.
-               // Let's add `deleteEdge` to store or uses `useTaskStore.setState`? No.
-
-               // Let's assume we can trigger a connection and maybe react flow warns?
-               // The request is "Overlap to connect" aka Parent Change.
-               // Let's implement `reparentNode` action in store to be safe.
+          // 4. Remove old connection if exists
+          if (incomingEdge) {
+              onEdgesChange([{ id: incomingEdge.id, type: 'remove' }]);
           }
 
-           // We will call a new store action: reparentNode
-           // Since I cannot edit Store in this turn (Store is separate file), I will add the logic later.
-           // For now, just connect.
-           onConnect({
-               source: targetNode.id,
-               target: node.id,
-               sourceHandle: null,
-               targetHandle: null
-           } as Connection); // Cast to Connection type
+          // 5. Create new connection
+          onConnect({
+              source: targetNode.id,
+              target: node.id,
+              sourceHandle: null,
+              targetHandle: null
+          } as Connection);
       }
-  }, [nodes, edges, onConnect]);
+  }, [nodes, edges, onConnect, onEdgesChange, setIsDragging]);
 
   const handleDeleteSelected = useCallback(() => {
       const selectedNodes = nodes.filter(n => n.selected);
@@ -256,6 +227,7 @@ export function TaskTreeCanvas() {
         )}
 
         <Panel position="top-right" className="flex gap-2">
+            <LanguageSwitcher />
             <InfoDialog />
             <HistoryControls />
             <SkinSwitcher />

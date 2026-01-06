@@ -203,12 +203,20 @@
   font-family: var(--font-pixel), monospace;
   font-size: 0.7rem; /* Pixel fonts are wide */
   image-rendering: pixelated;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  line-height: 1.4 !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 [data-skin="pixel"] .react-flow__node * {
   color: black !important;
   font-weight: 400 !important;
   text-shadow: none !important;
+  width: 100%;
 }
 
 /* Pixel Buttons/Controls */

@@ -2,32 +2,27 @@ import { Edge, Node } from '@xyflow/react';
 import { TaskData, TaskNode } from '@/store/useTaskStore';
 
 export function findNextActions(nodes: TaskNode[], edges: Edge[]): TaskNode[] {
-  // Map of node ID to number of incoming edges (parents)
-  const incomingCount = new Map<string, number>();
-  
-  // Initialize counts
-  nodes.forEach(n => incomingCount.set(n.id, 0));
-  
-  // Count incoming edges
-  edges.forEach(edge => {
-    const current = incomingCount.get(edge.target) || 0;
-    incomingCount.set(edge.target, current + 1);
-  });
-  
-  // Filter nodes:
-  // 1. Status is pending
-  // 2. Is Root (incoming count === 0)
-  const rootNodes = nodes.filter(node => {
-     if (node.data.status === 'completed') return false;
+  // 1. Identify pending nodes
+  const pendingNodes = nodes.filter(n => n.data.status === 'pending');
+  const completedNodeIds = new Set(nodes.filter(n => n.data.status === 'completed').map(n => n.id));
+
+  // 2. Filter: Include only if ALL parents are completed
+  const availableNodes = pendingNodes.filter(node => {
+     // Find incoming edges (parents)
+     const parentEdges = edges.filter(e => e.target === node.id);
      
-     const incoming = incomingCount.get(node.id) || 0;
-     return incoming === 0;
+     // If no parents (Root), it's available
+     if (parentEdges.length === 0) return true;
+
+     // Check if all parents are completed
+     const allParentsCompleted = parentEdges.every(edge => completedNodeIds.has(edge.source));
+     return allParentsCompleted;
   });
 
-  // Sort by horizontal position (Leftmost first)
-  return rootNodes.sort((a, b) => {
+  // 3. Sort by horizontal position (Leftmost first), then vertical
+  return availableNodes.sort((a, b) => {
       const xDiff = a.position.x - b.position.x;
-      if (Math.abs(xDiff) > 1) return xDiff;
+      if (Math.abs(xDiff) > 10) return xDiff; // Group by column roughly
       return a.position.y - b.position.y;
   });
 }
