@@ -201,22 +201,40 @@
   border: 3px solid black !important;
   box-shadow: 6px 6px 0px black !important;
   font-family: var(--font-pixel), monospace;
-  font-size: 0.7rem; /* Pixel fonts are wide */
+  font-size: 0.7rem;
   image-rendering: pixelated;
-  white-space: pre-wrap !important;
-  word-break: break-word !important;
-  line-height: 1.4 !important;
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  background-color: white !important;
+  z-index: 10;
+  /* Restore default layout behavior to prevent stretching */
+  width: fit-content !important;
+  min-width: 150px !important;
+  max-width: 300px !important;
 }
 
+[data-skin="pixel"] .react-flow__handle {
+  width: 8px !important;
+  height: 8px !important;
+  background: black !important;
+  border-radius: 0px !important;
+  border: none !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  /* Positioning tweaks if necessary, but default usually works */
+  z-index: 20;
+}
+
+/* Remove wildcard width: 100% which caused explosion */
 [data-skin="pixel"] .react-flow__node * {
   color: black !important;
   font-weight: 400 !important;
   text-shadow: none !important;
-  width: 100%;
+}
+
+/* Ensure text is visible in inputs */
+[data-skin="pixel"] .react-flow__node input {
+    background: transparent !important;
+    border: none !important;
+    color: black !important;
 }
 
 /* Pixel Buttons/Controls */
@@ -226,6 +244,7 @@
   background-color: white !important;
   border-radius: 0px !important;
   overflow: visible !important;
+  z-index: 20;
 }
 
 [data-skin="pixel"] .react-flow__controls-button {
@@ -261,6 +280,7 @@
   stroke-dasharray: 8 8; /* Dashed line for retro feel */
   shape-rendering: crispEdges; /* No anti-aliasing */
   filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.2));
+  z-index: 0;
 }
 
 /* General UI Elements inside Pixel Skin */
@@ -283,21 +303,27 @@
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
+    gap: 2px;
 }
 
 [data-skin="pixel"] [role="tab"] {
     border: 2px solid black !important;
-    margin-right: -2px; /* Connect them */
+    margin-right: 0px; 
     background: white;
-    box-shadow: none !important;
-    border-bottom: none !important;
+    box-shadow: 2px 2px 0px black !important; /* Consistent shadow */
+    border-bottom: 2px solid black !important;
+    font-size: 0.6rem !important; /* Smaller font to fit */
+    padding: 4px 2px !important;
+    height: auto !important;
 }
 
 [data-skin="pixel"] [role="tab"][data-state="active"] {
-    background: var(--primary) !important;
+    background: var(--primary) !important; /* Cyan */
     color: black !important;
-    margin-top: -4px;
-    padding-bottom: 8px; /* Pop up effect */
+    margin-top: 0px;
+    padding-bottom: 4px;
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0px black !important;
 }
 
 /* Quest Scroll Skin Overrides */
