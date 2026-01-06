@@ -26,19 +26,63 @@ export function TaskTreeCanvas() {
   const onEdgesChange = useTaskStore((state) => state.onEdgesChange);
   const onConnect = useTaskStore((state) => state.onConnect);
   const addNode = useTaskStore((state) => state.addNode);
+  const addEdge = useTaskStore((state) => state.addEdge);
+  const deleteNode = useTaskStore((state) => state.deleteNode);
 
-  // Simple handler to add a node for demo purposes (double click on background?)
-  // For now, let's just rely on the initial node and maybe a panel button.
-  
-  const handleAddNode = () => {
+  const handleAddNode = useCallback(() => {
+     // Find selected node
+     const selectedNode = nodes.find(n => n.selected);
      const id = `node-${Date.now()}`;
-     addNode({
-         id,
-         type: 'task',
-         position: { x: Math.random() * 400, y: Math.random() * 400 },
-         data: { label: 'New Task', status: 'pending' }
-     });
-  };
+     
+     if (selectedNode) {
+         // Auto-connect to selected node
+         // Position slightly to the right
+         const newNode = {
+             id,
+             type: 'task',
+             position: { 
+                 x: selectedNode.position.x + 250, 
+                 y: selectedNode.position.y 
+             },
+             data: { label: 'Sub Task', status: 'pending' as const },
+             selected: true, // Auto-select new node
+         };
+         
+         addNode(newNode);
+         
+         const newEdge = {
+             id: `e-${selectedNode.id}-${id}`,
+             source: selectedNode.id,
+             target: id,
+             animated: true,
+         };
+         
+         addEdge(newEdge);
+     } else {
+         // Free placement (randomized near center or safe area)
+         addNode({
+             id,
+             type: 'task',
+             position: { x: Math.random() * 200 + 100, y: Math.random() * 200 + 100 },
+             data: { label: 'New Task', status: 'pending' as const },
+             selected: true,
+         });
+     }
+  }, [nodes, addNode, addEdge]);
+  
+  const handleDeleteSelected = useCallback(() => {
+      const selectedNodes = nodes.filter(n => n.selected);
+      // We can use the store's deleteNode or just reactflow's hook/functionality?
+      // But store needs to be updated.
+      // useTaskStore handles onNodesChange which usually handles deletion if triggered by Keyboard.
+      // But for button click, we need to manually trigger deletion.
+      
+      selectedNodes.forEach(n => {
+          if (n.deletable !== false) {
+              deleteNode(n.id);
+          }
+      });
+  }, [nodes, deleteNode]);
 
   return (
     <div className="flex-1 h-full relative">
@@ -50,6 +94,7 @@ export function TaskTreeCanvas() {
         onConnect={onConnect}
         nodeTypes={nodeTypes}
         fitView
+        deleteKeyCode={['Backspace', 'Delete']}
       >
         <Background />
         <Controls />
@@ -62,8 +107,15 @@ export function TaskTreeCanvas() {
           >
             + Add Task
           </button>
+          <button 
+             onClick={handleDeleteSelected}
+             className="px-3 py-1.5 text-xs font-medium bg-destructive text-destructive-foreground rounded-md hover:opacity-90 transition-opacity"
+             title="Delete Selected (Backspace)"
+          >
+            Delete
+          </button>
            <div className="text-xs text-muted-foreground self-center px-2 border-l">
-              Drag to connect nodes
+              {nodes.some(n => n.selected) ? 'Add to connect' : 'Add to place free'}
            </div>
         </Panel>
       </ReactFlow>

@@ -32,6 +32,7 @@ interface TaskState {
   
   setSkin: (skin: Skin) => void;
   addNode: (node: TaskNode) => void;
+  addEdge: (edge: Edge) => void;
   updateNodeData: (id: string, data: Partial<TaskData>) => void;
   toggleNodeStatus: (id: string) => void;
   deleteNode: (id: string) => void;
@@ -71,6 +72,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   setSkin: (skin) => set({ skin }),
 
   addNode: (node) => set((state) => ({ nodes: [...state.nodes, node] })),
+  addEdge: (edge) => set((state) => ({ edges: [...state.edges, edge] })),
 
   updateNodeData: (id, data) =>
     set((state) => ({
