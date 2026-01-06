@@ -58,20 +58,25 @@ export function TaskTreeCanvas() {
      let position = { x: Math.random() * 200 + 100, y: Math.random() * 200 + 100 }; // Default free placement
 
      if (selectedNode) {
-         // Auto-layout: place to the right
-         position = {
-             x: selectedNode.position.x + 250,
-             y: selectedNode.position.y
-         };
-
-         // Basic collision adjustment (very simple)
-         const overlapping = nodes.find(n =>
-             Math.abs(n.position.x - position.x) < 50 &&
-             Math.abs(n.position.y - position.y) < 50
-         );
-         if (overlapping) {
-             position.y += 100;
+         // Find all existing children of the selected node
+         const childEdges = edges.filter(e => e.source === selectedNode.id);
+         const childNodes = childEdges.map(e => nodes.find(n => n.id === e.target)).filter((n): n is TaskNodeType => !!n);
+         
+         // Calculate new position
+         const baseX = selectedNode.position.x + 250;
+         let baseY = selectedNode.position.y;
+         
+         if (childNodes.length > 0) {
+             // Find the lowest child
+             const lowestChild = childNodes.reduce((lowest, current) => {
+                 return current.position.y > lowest.position.y ? current : lowest;
+             }, childNodes[0]);
+             
+             // Place below the lowest child
+             baseY = lowestChild.position.y + 100; // 100px vertical gap
          }
+
+         position = { x: baseX, y: baseY };
      } else {
          // Center of screen if possible? Or just offset
          // Ideally use project function but we are inside component
