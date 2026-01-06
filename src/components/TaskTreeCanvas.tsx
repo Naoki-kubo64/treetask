@@ -13,7 +13,9 @@ import '@xyflow/react/dist/style.css';
 
 import { useTaskStore } from '@/store/useTaskStore';
 import { TaskNode } from './TaskNode';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
+import { EdgeCustomizer } from './EdgeCustomizer';
+import { Edge } from '@xyflow/react';
 
 const nodeTypes = {
   task: TaskNode,
@@ -34,6 +36,17 @@ export function TaskTreeCanvas() {
   const addEdge = useTaskStore((state) => state.addEdge);
   const deleteNode = useTaskStore((state) => state.deleteNode);
   const activeTypeId = useTaskStore((state) => state.activeTypeId);
+
+  const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
+
+  const onEdgeClick = useCallback((event: React.MouseEvent, edge: Edge) => {
+      event.stopPropagation();
+      setSelectedEdgeId(edge.id);
+  }, []);
+
+  const onPaneClick = useCallback(() => {
+     setSelectedEdgeId(null);
+  }, []);
 
   const handleAddNode = useCallback(() => {
      // Find selected node
@@ -93,6 +106,8 @@ export function TaskTreeCanvas() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onEdgeClick={onEdgeClick}
+        onPaneClick={onPaneClick}
         nodeTypes={nodeTypes}
         fitView
         deleteKeyCode={['Backspace', 'Delete']}
@@ -106,6 +121,13 @@ export function TaskTreeCanvas() {
         <Controls showInteractive={false} />
         <MiniMap zoomable pannable className='!bg-card !border-border' nodeColor={() => 'hsl(var(--primary))'} />
         
+        {selectedEdgeId && (
+            <EdgeCustomizer 
+               edgeId={selectedEdgeId} 
+               onClose={() => setSelectedEdgeId(null)} 
+            />
+        )}
+
         <Panel position="top-left" className="bg-card/80 backdrop-blur p-2 rounded-lg border shadow-sm flex gap-2">
           <button 
              onClick={handleAddNode}

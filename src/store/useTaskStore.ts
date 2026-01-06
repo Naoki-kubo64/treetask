@@ -58,6 +58,7 @@ interface TaskState {
   updateNodeData: (id: string, data: Partial<TaskData>) => void;
   toggleNodeStatus: (id: string) => void;
   deleteNode: (id: string) => void;
+  updateEdge: (id: string, data: Partial<Edge>) => void;
   
   // Type Actions
   addTaskType: (type: TaskType) => void;
@@ -124,7 +125,8 @@ export const useTaskStore = create<TaskState>((set, get) => ({
         const page = state.pages.find(p => p.id === state.activePageId);
         if (!page) return state;
         
-        const newEdges = addEdge(connection, page.edges);
+        const newEdge = { ...connection, type: 'default', style: { strokeWidth: 2, stroke: '#888' } }; 
+        const newEdges = addEdge(newEdge, page.edges);
         const newPages = state.pages.map(p => p.id === state.activePageId ? { ...p, edges: newEdges } : p);
         
         return { pages: newPages };
@@ -143,7 +145,20 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   addEdge: (edge) => set((state) => {
       const page = state.pages.find(p => p.id === state.activePageId);
       if (!page) return state;
-      const newPages = state.pages.map(p => p.id === state.activePageId ? { ...p, edges: [...p.edges, edge] } : p);
+      // Ensure default style
+      const styledEdge = { ...edge, style: { strokeWidth: 2, stroke: '#888', ...edge.style } };
+      const newPages = state.pages.map(p => p.id === state.activePageId ? { ...p, edges: [...p.edges, styledEdge] } : p);
+      return { pages: newPages };
+  }),
+
+  updateEdge: (id, data) => set((state) => {
+      const page = state.pages.find(p => p.id === state.activePageId);
+      if (!page) return state;
+      
+      const newEdges = page.edges.map((edge) =>
+          edge.id === id ? { ...edge, ...data, style: { ...edge.style, ...data.style } } : edge
+      );
+      const newPages = state.pages.map(p => p.id === state.activePageId ? { ...p, edges: newEdges } : p);
       return { pages: newPages };
   }),
 

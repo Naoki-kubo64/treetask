@@ -5,11 +5,42 @@ import { CheckCircle2, Circle } from 'lucide-react';
 import { useTaskStore, TaskNode as TaskNodeType } from '@/store/useTaskStore';
 import { cn } from '@/lib/utils'; // Shadcn util
 import { motion } from 'framer-motion';
+import { useState, useRef, useEffect } from 'react';
+import { Input } from '@/components/ui/input';
 
 export function TaskNode({ id, data, selected }: NodeProps<TaskNodeType>) {
   const toggleNodeStatus = useTaskStore((state) => state.toggleNodeStatus);
+  const updateNodeData = useTaskStore((state) => state.updateNodeData);
   const taskTypes = useTaskStore((state) => state.taskTypes);
   
+  const [isEditing, setIsEditing] = useState(false);
+  const [editLabel, setEditLabel] = useState(data.label);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+     if (isEditing && inputRef.current) {
+         inputRef.current.focus();
+     }
+  }, [isEditing]);
+  
+  const handleDoubleClick = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      setIsEditing(true);
+  };
+  
+  const handleBlur = () => {
+      setIsEditing(false);
+      if (editLabel.trim() !== data.label) {
+          updateNodeData(id, { label: editLabel });
+      }
+  };
+  
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') {
+          handleBlur();
+      }
+  };
+
   const currentType = taskTypes.find(t => t.id === data.typeId) || taskTypes[0];
   const typeColor = currentType?.color || 'hsl(var(--primary))';
   
@@ -58,11 +89,29 @@ export function TaskNode({ id, data, selected }: NodeProps<TaskNodeType>) {
           )}
         </button>
         
-        <div className="flex-1">
-          <div className={cn("font-medium text-sm", isCompleted && "line-through text-muted-foreground")}>
-            {data.label}
-          </div>
-          {data.description && (
+        <div className="flex-1 min-w-0">
+          {isEditing ? (
+             <Input
+                ref={inputRef}
+                value={editLabel}
+                onChange={(e) => setEditLabel(e.target.value)}
+                onBlur={handleBlur}
+                onKeyDown={handleKeyDown}
+                className="h-6 py-0 px-1 text-sm font-medium"
+             />
+          ) : (
+            <div 
+               className={cn(
+                  "font-medium text-sm truncate cursor-text", 
+                  isCompleted && "line-through text-muted-foreground"
+               )}
+               onDoubleClick={handleDoubleClick}
+               title="Double click to edit"
+            >
+              {data.label}
+            </div>
+          )}
+          {data.description && !isEditing && (
              <div className="text-xs text-muted-foreground mt-0.5">{data.description}</div>
           )}
         </div>
