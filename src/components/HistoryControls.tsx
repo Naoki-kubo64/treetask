@@ -4,8 +4,10 @@ import { Button } from '@/components/ui/button';
 import { useTaskStore } from '@/store/useTaskStore';
 import { Undo2, Redo2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useLocale } from '@/hooks/useLocale';
 
 export function HistoryControls() {
+  const { t } = useLocale();
   // Access the temporal store from zundo
   const useStore = useTaskStore as any;
   const { undo, redo, pastStates, futureStates } = useStore.temporal.getState();
@@ -32,7 +34,7 @@ export function HistoryControls() {
         className="h-8 w-8"
         onClick={() => undo()}
         disabled={!canUndo}
-        title="Undo (Ctrl+Z)"
+        title={`${t.history.undo} (Ctrl+Z)`}
       >
         <Undo2 className="w-4 h-4" />
       </Button>
@@ -42,7 +44,7 @@ export function HistoryControls() {
         className="h-8 w-8"
         onClick={() => redo()}
         disabled={!canRedo}
-        title="Redo (Ctrl+Y)"
+        title={`${t.history.redo} (Ctrl+Y)`}
       >
         <Redo2 className="w-4 h-4" />
       </Button>

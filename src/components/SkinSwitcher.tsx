@@ -10,8 +10,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { useLocale } from '@/hooks/useLocale';
 
 export function SkinSwitcher() {
+  const { t } = useLocale();
   const currentSkin = useTaskStore((state) => state.skin);
   const setSkin = useTaskStore((state) => state.setSkin);
 
@@ -24,7 +26,7 @@ export function SkinSwitcher() {
       </PopoverTrigger>
       <PopoverContent className="w-56 p-2" align="end">
          <div className="space-y-1">
-           <h4 className="font-medium text-sm px-2 py-1 mb-2">Select Skin</h4>
+           <h4 className="font-medium text-sm px-2 py-1 mb-2">{t.skins.title}</h4>
            {Object.entries(skins).map(([key, config]) => (
              <button
                key={key}
@@ -35,7 +37,7 @@ export function SkinSwitcher() {
                )}
              >
                {config.name}
-               {currentSkin === key && <span className="text-xs opacity-70">Active</span>}
+               {currentSkin === key && <span className="text-xs opacity-70">{t.skins.active}</span>}
              </button>
            ))}
          </div>

@@ -18,12 +18,15 @@ import { EdgeCustomizer } from './EdgeCustomizer';
 import { HistoryControls } from './HistoryControls';
 import { SkinSwitcher } from './SkinSwitcher';
 import { Edge, Connection } from '@xyflow/react';
+import { InfoDialog } from './InfoDialog';
+import { useLocale } from '@/hooks/useLocale';
 
 const nodeTypes = {
   task: TaskNode,
 };
 
 export function TaskTreeCanvas() {
+  const { t } = useLocale();
   const pages = useTaskStore((state) => state.pages);
   const activePageId = useTaskStore((state) => state.activePageId);
   
@@ -253,6 +256,7 @@ export function TaskTreeCanvas() {
         )}
 
         <Panel position="top-right" className="flex gap-2">
+            <InfoDialog />
             <HistoryControls />
             <SkinSwitcher />
         </Panel>
@@ -262,17 +266,17 @@ export function TaskTreeCanvas() {
              onClick={() => handleAddNode()}
              className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm"
           >
-            + Add Task
+            {t.canvas.addTask}
           </button>
           <button 
              onClick={handleDeleteSelected}
              className="px-3 py-1.5 text-xs font-medium bg-destructive text-destructive-foreground rounded-md hover:opacity-90 transition-opacity"
-             title="Delete Selected (Backspace)"
+             title={`${t.canvas.deleteSelected} (Backspace)`}
           >
-            Delete
+            {t.common.delete}
           </button>
            <div className="text-xs text-muted-foreground self-center px-2 border-l">
-              {nodes.some(n => n.selected) ? 'Add to connect' : 'Add to place free'}
+              {nodes.some(n => n.selected) ? t.canvas.addToConnect : t.canvas.addToPlaceFree}
            </div>
         </Panel>
       </ReactFlow>

@@ -5,8 +5,10 @@ import { findNextActions } from '@/lib/treeUtils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { CheckCircle2, Circle } from 'lucide-react';
+import { useLocale } from '@/hooks/useLocale';
 
 export function NextActionList() {
+  const { t } = useLocale();
   const pages = useTaskStore((state) => state.pages);
   const activePageId = useTaskStore((state) => state.activePageId);
   const activePage = pages.find(p => p.id === activePageId);
@@ -21,21 +23,21 @@ export function NextActionList() {
     <div className="flex flex-col h-full">
       <div className="p-4 border-b">
         <h2 className="font-semibold text-lg flex items-center gap-2">
-          Next Actions
+          {t.nextActions.title}
           <span className="text-xs font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
             {nextActions.length}
           </span>
         </h2>
         <p className="text-xs text-muted-foreground mt-1">
-          Focus on these tasks to make progress.
+          {t.nextActions.subtitle}
         </p>
       </div>
       
       <ScrollArea className="flex-1 p-4">
         {nextActions.length === 0 ? (
           <div className="text-center text-muted-foreground py-10">
-            <p>All clear! 🎉</p>
-            <p className="text-xs mt-2">Add more tasks to the tree.</p>
+            <p>{t.nextActions.empty}</p>
+            <p className="text-xs mt-2">{t.nextActions.emptySub}</p>
           </div>
         ) : (
           <div className="space-y-3">

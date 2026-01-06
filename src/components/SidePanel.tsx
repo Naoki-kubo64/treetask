@@ -7,8 +7,11 @@ import { TaskDetailPanel } from "./TaskDetailPanel";
 import { ListTodo, StickyNote, Info, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useTaskStore } from "@/store/useTaskStore";
+import { useLocale } from "@/hooks/useLocale";
 
 export function SidePanel() {
+  const { t } = useLocale();
+
   return (
     <div className="w-80 border-l bg-card/50 backdrop-blur-sm h-full flex flex-col shadow-xl z-10">
       <Tabs defaultValue="actions" className="w-full flex flex-col h-full">
@@ -16,15 +19,15 @@ export function SidePanel() {
            <TabsList className="w-full grid grid-cols-3">
              <TabsTrigger value="actions" className="flex items-center gap-2">
                <ListTodo className="w-4 h-4" />
-               <span className="hidden sm:inline">Act</span>
+               <span className="hidden sm:inline">{t.tabs.act}</span>
              </TabsTrigger>
              <TabsTrigger value="pages" className="flex items-center gap-2">
                <StickyNote className="w-4 h-4" />
-               <span className="hidden sm:inline">Pages</span>
+               <span className="hidden sm:inline">{t.tabs.pages}</span>
              </TabsTrigger>
              <TabsTrigger value="inspect" className="flex items-center gap-2">
                <Info className="w-4 h-4" />
-               <span className="hidden sm:inline">Info</span>
+               <span className="hidden sm:inline">{t.tabs.inspect}</span>
              </TabsTrigger>
            </TabsList>
         </div>
@@ -35,7 +38,7 @@ export function SidePanel() {
                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                <Input
                  type="search"
-                 placeholder="Search tasks..."
+                 placeholder={t.common.search}
                  className="pl-9 h-9"
                  onChange={(e) => useTaskStore.setState({ searchQuery: e.target.value })}
                />

@@ -90,7 +90,7 @@ const initialNodes: TaskNode[] = [
     id: 'root',
     type: 'task',
     position: { x: 50, y: 150 },
-    data: { label: 'Main Goal', status: 'pending' as const },
+    data: { label: 'Ready', status: 'pending' as const },
     deletable: false,
   },
 ];
