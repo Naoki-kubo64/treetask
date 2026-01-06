@@ -97,7 +97,7 @@ export function TaskNode({ id, data, selected }: NodeProps<TaskNodeType>) {
                 onChange={(e) => setEditLabel(e.target.value)}
                 onBlur={handleBlur}
                 onKeyDown={handleKeyDown}
-                className="h-6 py-0 px-1 text-sm font-medium"
+                className="h-6 py-0 px-1 text-sm font-medium nodrag cursor-text"
              />
           ) : (
             <div 

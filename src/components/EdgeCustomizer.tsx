@@ -109,9 +109,9 @@ export function EdgeCustomizer({ edgeId, onClose }: EdgeCustomizerProps) {
 
         <div className="pt-2 border-t">
             <Button 
-                variant="destructive" 
+                variant="outline" 
                 size="sm" 
-                className="w-full h-8 flex items-center justify-center gap-2"
+                className="w-full h-8 flex items-center justify-center gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
                 onClick={handleDelete}
             >
                 <Trash2 className="w-3 h-3" />
