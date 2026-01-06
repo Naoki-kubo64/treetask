@@ -26,11 +26,11 @@ export function TaskNode({ id, data, selected }: NodeProps<TaskNodeType>) {
         isCompleted && "opacity-60 grayscale"
       )}
       style={{
-          borderColor: selected ? typeColor : undefined,
-          // If not selected, maybe show a colored indicator?
-          // Let's use border-left for type indication?
-          borderLeftWidth: '4px',
           borderLeftColor: typeColor,
+          borderLeftWidth: '4px',
+          borderTopColor: selected ? typeColor : undefined,
+          borderRightColor: selected ? typeColor : undefined,
+          borderBottomColor: selected ? typeColor : undefined,
           '--tw-ring-color': typeColor 
       } as React.CSSProperties}
     >
