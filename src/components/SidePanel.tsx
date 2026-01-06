@@ -2,8 +2,8 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { NextActionList } from "./NextActionList";
-import { TaskTypeManager } from "./TaskTypeManager";
-import { ListTodo, Tag } from "lucide-react";
+import { PageManager } from "./PageManager";
+import { ListTodo, StickyNote } from "lucide-react";
 
 export function SidePanel() {
   return (
@@ -15,9 +15,9 @@ export function SidePanel() {
                <ListTodo className="w-4 h-4" />
                Actions
              </TabsTrigger>
-             <TabsTrigger value="types" className="flex items-center gap-2">
-               <Tag className="w-4 h-4" />
-               Types
+             <TabsTrigger value="pages" className="flex items-center gap-2">
+               <StickyNote className="w-4 h-4" />
+               Pages
              </TabsTrigger>
            </TabsList>
         </div>
@@ -26,8 +26,8 @@ export function SidePanel() {
            <NextActionList />
         </TabsContent>
         
-        <TabsContent value="types" className="flex-1 m-0 overflow-hidden">
-           <TaskTypeManager />
+        <TabsContent value="pages" className="flex-1 m-0 overflow-hidden">
+           <PageManager />
         </TabsContent>
       </Tabs>
     </div>

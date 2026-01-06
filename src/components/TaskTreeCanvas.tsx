@@ -13,16 +13,20 @@ import '@xyflow/react/dist/style.css';
 
 import { useTaskStore } from '@/store/useTaskStore';
 import { TaskNode } from './TaskNode';
-import { useCallback, useState } from 'react';
-import { Lock, Unlock } from 'lucide-react';
+import { useCallback } from 'react';
 
 const nodeTypes = {
   task: TaskNode,
 };
 
 export function TaskTreeCanvas() {
-  const nodes = useTaskStore((state) => state.nodes);
-  const edges = useTaskStore((state) => state.edges);
+  const pages = useTaskStore((state) => state.pages);
+  const activePageId = useTaskStore((state) => state.activePageId);
+  
+  const activePage = pages.find(p => p.id === activePageId);
+  const nodes = activePage?.nodes || [];
+  const edges = activePage?.edges || [];
+
   const onNodesChange = useTaskStore((state) => state.onNodesChange);
   const onEdgesChange = useTaskStore((state) => state.onEdgesChange);
   const onConnect = useTaskStore((state) => state.onConnect);
@@ -30,8 +34,6 @@ export function TaskTreeCanvas() {
   const addEdge = useTaskStore((state) => state.addEdge);
   const deleteNode = useTaskStore((state) => state.deleteNode);
   const activeTypeId = useTaskStore((state) => state.activeTypeId);
-
-  const [isLocked, setIsLocked] = useState(false);
 
   const handleAddNode = useCallback(() => {
      // Find selected node
@@ -76,11 +78,6 @@ export function TaskTreeCanvas() {
   
   const handleDeleteSelected = useCallback(() => {
       const selectedNodes = nodes.filter(n => n.selected);
-      // We can use the store's deleteNode or just reactflow's hook/functionality?
-      // But store needs to be updated.
-      // useTaskStore handles onNodesChange which usually handles deletion if triggered by Keyboard.
-      // But for button click, we need to manually trigger deletion.
-      
       selectedNodes.forEach(n => {
           if (n.deletable !== false) {
               deleteNode(n.id);
@@ -99,25 +96,17 @@ export function TaskTreeCanvas() {
         nodeTypes={nodeTypes}
         fitView
         deleteKeyCode={['Backspace', 'Delete']}
-        panOnDrag={!isLocked}
-        zoomOnScroll={!isLocked}
-        zoomOnPinch={!isLocked}
-        panOnScroll={!isLocked}
-        nodesDraggable={!isLocked}
+        panOnDrag={false}
+        zoomOnScroll={false}
+        zoomOnPinch={false}
+        panOnScroll={false}
+        nodesDraggable={true} // Nodes are draggable, canvas is not
       >
         <Background />
-        <Controls />
+        <Controls showInteractive={false} />
         <MiniMap zoomable pannable className='!bg-card !border-border' nodeColor={() => 'hsl(var(--primary))'} />
         
         <Panel position="top-left" className="bg-card/80 backdrop-blur p-2 rounded-lg border shadow-sm flex gap-2">
-          <button
-             onClick={() => setIsLocked(!isLocked)}
-             className="px-2 py-1.5 text-muted-foreground hover:text-primary transition-colors"
-             title={isLocked ? "Unlock Viewport" : "Lock Viewport"}
-          >
-             {isLocked ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
-          </button>
-          <div className="w-px bg-border my-1" />
           <button 
              onClick={handleAddNode}
              className="px-3 py-1.5 text-xs font-medium bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity"

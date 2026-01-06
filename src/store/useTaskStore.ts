@@ -28,100 +28,167 @@ export interface TaskData {
 
 export type TaskNode = Node<TaskData>;
 
+export interface Page {
+    id: string;
+    name: string;
+    nodes: TaskNode[];
+    edges: Edge[];
+}
+
 interface TaskState {
-  nodes: TaskNode[];
-  edges: Edge[];
+  // Global State
   skin: Skin;
+  taskTypes: TaskType[];
+  activeTypeId: string;
   
+  // Page State
+  pages: Page[];
+  activePageId: string;
+
+  // Actions
   onNodesChange: OnNodesChange<TaskNode>;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
   
   setSkin: (skin: Skin) => void;
+  
+  // Node Actions (operate on active page)
   addNode: (node: TaskNode) => void;
   addEdge: (edge: Edge) => void;
   updateNodeData: (id: string, data: Partial<TaskData>) => void;
   toggleNodeStatus: (id: string) => void;
   deleteNode: (id: string) => void;
   
-  taskTypes: TaskType[];
-  activeTypeId: string; // The type newly created tasks will use
+  // Type Actions
   addTaskType: (type: TaskType) => void;
   updateTaskType: (id: string, type: Partial<TaskType>) => void;
   deleteTaskType: (id: string) => void;
   setActiveTypeId: (id: string) => void;
+  
+  // Page Actions
+  addPage: (name: string) => void;
+  deletePage: (id: string) => void;
+  setActivePage: (id: string) => void;
+  updatePageName: (id: string, name: string) => void;
 }
 
+const initialPageId = 'page-1';
 const initialNodes: TaskNode[] = [
   {
     id: 'root',
     type: 'task',
     position: { x: 0, y: 0 },
-    data: { label: 'Main Goal', status: 'pending' },
+    data: { label: 'Main Goal', status: 'pending' as const },
     deletable: false,
   },
 ];
 
 export const useTaskStore = create<TaskState>((set, get) => ({
-  nodes: initialNodes,
-  edges: [],
   skin: 'refined',
-  
   taskTypes: [
     { id: 'default', name: 'Task', color: 'hsl(var(--primary))' },
-    { id: 'goal', name: 'Goal', color: '#ef4444' }, // red-500
-    { id: 'memo', name: 'Memo', color: '#f59e0b' }, // amber-500
+    { id: 'goal', name: 'Goal', color: '#ef4444' }, 
+    { id: 'memo', name: 'Memo', color: '#f59e0b' }, 
   ],
   activeTypeId: 'default',
+  
+  pages: [
+      { id: initialPageId, name: 'Main Plan', nodes: initialNodes, edges: [] }
+  ],
+  activePageId: initialPageId,
 
   onNodesChange: (changes) => {
-    set({
-      nodes: applyNodeChanges(changes, get().nodes),
+    set((state) => {
+        const page = state.pages.find(p => p.id === state.activePageId);
+        if (!page) return state;
+        
+        const newNodes = applyNodeChanges<TaskNode>(changes, page.nodes);
+        const newPages = state.pages.map(p => p.id === state.activePageId ? { ...p, nodes: newNodes } : p);
+        
+        return { pages: newPages };
     });
   },
   onEdgesChange: (changes) => {
-    set({
-      edges: applyEdgeChanges(changes, get().edges),
+    set((state) => {
+        const page = state.pages.find(p => p.id === state.activePageId);
+        if (!page) return state;
+        
+        const newEdges = applyEdgeChanges(changes, page.edges);
+        const newPages = state.pages.map(p => p.id === state.activePageId ? { ...p, edges: newEdges } : p);
+        
+        return { pages: newPages };
     });
   },
   onConnect: (connection: Connection) => {
-    set({
-      edges: addEdge(connection, get().edges),
+    set((state) => {
+        const page = state.pages.find(p => p.id === state.activePageId);
+        if (!page) return state;
+        
+        const newEdges = addEdge(connection, page.edges);
+        const newPages = state.pages.map(p => p.id === state.activePageId ? { ...p, edges: newEdges } : p);
+        
+        return { pages: newPages };
     });
   },
 
   setSkin: (skin) => set({ skin }),
 
-  addNode: (node) => set((state) => ({ nodes: [...state.nodes, node] })),
-  addEdge: (edge) => set((state) => ({ edges: [...state.edges, edge] })),
+  addNode: (node) => set((state) => {
+      const page = state.pages.find(p => p.id === state.activePageId);
+      if (!page) return state;
+      const newPages = state.pages.map(p => p.id === state.activePageId ? { ...p, nodes: [...p.nodes, node] } : p);
+      return { pages: newPages };
+  }),
+  
+  addEdge: (edge) => set((state) => {
+      const page = state.pages.find(p => p.id === state.activePageId);
+      if (!page) return state;
+      const newPages = state.pages.map(p => p.id === state.activePageId ? { ...p, edges: [...p.edges, edge] } : p);
+      return { pages: newPages };
+  }),
 
   updateNodeData: (id, data) =>
-    set((state) => ({
-      nodes: state.nodes.map((node) =>
-        node.id === id ? { ...node, data: { ...node.data, ...data } } : node
-      ),
-    })),
+    set((state) => {
+        const page = state.pages.find(p => p.id === state.activePageId);
+        if (!page) return state;
+        
+        const newNodes = page.nodes.map((node) =>
+            node.id === id ? { ...node, data: { ...node.data, ...data } } : node
+        );
+        const newPages = state.pages.map(p => p.id === state.activePageId ? { ...p, nodes: newNodes } : p);
+        return { pages: newPages };
+    }),
 
   toggleNodeStatus: (id) =>
-    set((state) => ({
-      nodes: state.nodes.map((node) =>
+    set((state) => {
+        const page = state.pages.find(p => p.id === state.activePageId);
+        if (!page) return state;
+        
+        const newNodes = page.nodes.map((node) =>
         node.id === id
           ? {
               ...node,
               data: {
                 ...node.data,
-                status: node.data.status === 'pending' ? 'completed' : 'pending',
+                status: (node.data.status === 'pending' ? 'completed' : 'pending') as 'pending' | 'completed',
               },
             }
           : node
-      ),
-    })),
+        );
+        const newPages = state.pages.map(p => p.id === state.activePageId ? { ...p, nodes: newNodes } : p);
+        return { pages: newPages };
+    }),
     
   deleteNode: (id) =>
-      set((state) => ({
-          nodes: state.nodes.filter(n => n.id !== id),
-          edges: state.edges.filter(e => e.source !== id && e.target !== id)
-      })),
+      set((state) => {
+        const page = state.pages.find(p => p.id === state.activePageId);
+        if (!page) return state;
+        
+        const newNodes = page.nodes.filter(n => n.id !== id);
+        const newEdges = page.edges.filter(e => e.source !== id && e.target !== id);
+        const newPages = state.pages.map(p => p.id === state.activePageId ? { ...p, nodes: newNodes, edges: newEdges } : p);
+        return { pages: newPages };
+      }),
 
   addTaskType: (type) => set((state) => ({ taskTypes: [...state.taskTypes, type] })),
   
@@ -131,9 +198,37 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   
   deleteTaskType: (id) => set((state) => ({
       taskTypes: state.taskTypes.filter(t => t.id !== id),
-      // Optionally reset typeId of nodes that had this type?
-      // For now let's keep it simple.
   })),
   
   setActiveTypeId: (id) => set({ activeTypeId: id }),
+  
+  addPage: (name) => set((state) => {
+      const id = `page-${Date.now()}`;
+      // New Page starts with a Root node?
+      const rootNode: TaskNode = {
+          id: `root-${id}`,
+          type: 'task',
+          position: { x: 0, y: 0 },
+          data: { label: name, status: 'pending' as const },
+          deletable: false,
+      };
+      
+      return { 
+          pages: [...state.pages, { id, name, nodes: [rootNode], edges: [] }],
+          activePageId: id
+      };
+  }),
+  
+  deletePage: (id) => set((state) => {
+      if (state.pages.length <= 1) return state; // Don't delete last page
+      const newPages = state.pages.filter(p => p.id !== id);
+      const newActiveId = state.activePageId === id ? newPages[0].id : state.activePageId;
+      return { pages: newPages, activePageId: newActiveId };
+  }),
+  
+  setActivePage: (id) => set({ activePageId: id }),
+  
+  updatePageName: (id, name) => set(state => ({
+      pages: state.pages.map(p => p.id === id ? { ...p, name } : p)
+  })),
 }));

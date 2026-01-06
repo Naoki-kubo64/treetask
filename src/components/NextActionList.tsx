@@ -7,8 +7,12 @@ import { cn } from '@/lib/utils';
 import { CheckCircle2, Circle } from 'lucide-react';
 
 export function NextActionList() {
-  const nodes = useTaskStore((state) => state.nodes);
-  const edges = useTaskStore((state) => state.edges);
+  const pages = useTaskStore((state) => state.pages);
+  const activePageId = useTaskStore((state) => state.activePageId);
+  const activePage = pages.find(p => p.id === activePageId);
+  const nodes = activePage?.nodes || [];
+  const edges = activePage?.edges || [];
+  
   const toggleNodeStatus = useTaskStore((state) => state.toggleNodeStatus);
 
   const nextActions = findNextActions(nodes, edges);
