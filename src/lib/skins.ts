@@ -1,4 +1,4 @@
-export type Skin = "refined" | "minimal" | "nature" | "frost";
+export type Skin = "refined" | "minimal" | "nature" | "frost" | "pixel" | "quest";
 
 export interface SkinConfig {
   name: string;
@@ -104,6 +104,56 @@ export const skins: Record<Skin, SkinConfig> = {
       "--input": "hsl(217 33% 25%)",
       "--ring": "hsl(186 100% 50%)",
       "--radius": "1.5rem",
+    },
+  },
+  pixel: {
+    name: "Pixel (Pop)",
+    variables: {
+      "--background": "hsl(0 0% 100%)", /* White base */
+      "--foreground": "hsl(0 0% 0%)", /* Black text */
+      "--card": "hsl(0 0% 100%)", /* White card */
+      "--card-foreground": "hsl(0 0% 0%)",
+      "--popover": "hsl(0 0% 100%)",
+      "--popover-foreground": "hsl(0 0% 0%)",
+      "--primary": "hsl(180 100% 50%)", /* Cyan */
+      "--primary-foreground": "hsl(0 0% 0%)",
+      "--secondary": "hsl(300 100% 50%)", /* Magenta */
+      "--secondary-foreground": "hsl(0 0% 100%)",
+      "--muted": "hsl(0 0% 95%)",
+      "--muted-foreground": "hsl(0 0% 40%)",
+      "--accent": "hsl(60 100% 50%)", /* Yellow */
+      "--accent-foreground": "hsl(0 0% 0%)",
+      "--destructive": "hsl(0 100% 50%)", /* Red */
+      "--destructive-foreground": "hsl(0 0% 100%)",
+      "--border": "hsl(0 0% 0%)", /* Black border */
+      "--input": "hsl(0 0% 100%)",
+      "--ring": "hsl(0 0% 0%)",
+      "--radius": "0px",
+    },
+  },
+  quest: {
+    name: "Quest (Map)",
+    variables: {
+      "--background": "hsl(38 60% 85%)", /* Parchment */
+      "--foreground": "hsl(30 40% 25%)", /* Ink Brown */
+      "--card": "hsl(38 60% 88%)",
+      "--card-foreground": "hsl(30 40% 25%)",
+      "--popover": "hsl(38 60% 85%)",
+      "--popover-foreground": "hsl(30 40% 25%)",
+      "--primary": "hsl(0 60% 40%)", /* Wax Red */
+      "--primary-foreground": "hsl(38 60% 85%)",
+      "--secondary": "hsl(200 30% 30%)", /* Map Blue */
+      "--secondary-foreground": "hsl(38 60% 85%)",
+      "--muted": "hsl(38 40% 75%)",
+      "--muted-foreground": "hsl(30 40% 40%)",
+      "--accent": "hsl(0 60% 40%)",
+      "--accent-foreground": "hsl(38 60% 85%)",
+      "--destructive": "hsl(0 60% 40%)",
+      "--destructive-foreground": "hsl(38 60% 85%)",
+      "--border": "hsl(30 40% 25%)",
+      "--input": "hsl(38 40% 80%)",
+      "--ring": "hsl(0 60% 40%)",
+      "--radius": "0.5rem",
     },
   },
 };

@@ -181,3 +181,190 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Pixel (Pop) Skin Overrides - Reverted */
+[data-skin="pixel"] body {
+  font-family: var(--font-pixel), monospace;
+  background-color: white;
+  /* Dithered pattern simulation using CSS gradients */
+  background-image: 
+    linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%, #f0f0f0),
+    linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%, #f0f0f0);
+  background-position: 0 0, 10px 10px;
+  background-size: 20px 20px;
+  image-rendering: pixelated;
+  color: black;
+}
+
+[data-skin="pixel"] .react-flow__node {
+  border-radius: 0px !important;
+  border: 3px solid black !important;
+  box-shadow: 6px 6px 0px black !important;
+  font-family: var(--font-pixel), monospace;
+  font-size: 0.7rem; /* Pixel fonts are wide */
+  image-rendering: pixelated;
+}
+
+[data-skin="pixel"] .react-flow__node * {
+  color: black !important;
+  font-weight: 400 !important;
+  text-shadow: none !important;
+}
+
+/* Pixel Buttons/Controls */
+[data-skin="pixel"] .react-flow__controls {
+  box-shadow: 4px 4px 0px black !important;
+  border: 2px solid black !important;
+  background-color: white !important;
+  border-radius: 0px !important;
+  overflow: visible !important;
+}
+
+[data-skin="pixel"] .react-flow__controls-button {
+  border-radius: 0px !important;
+  border-bottom: 2px solid black !important;
+  background-color: white !important;
+  color: black !important;
+  fill: black !important;
+}
+
+[data-skin="pixel"] .react-flow__controls-button:hover {
+  background-color: var(--primary) !important; /* Cyan hover */
+  color: white !important;
+  fill: white !important;
+}
+
+[data-skin="pixel"] .react-flow__controls-button svg {
+  fill: currentColor !important;
+}
+
+[data-skin="pixel"] .react-flow__controls-button svg path {
+  fill: currentColor !important;
+}
+
+[data-skin="pixel"] .react-flow__controls-button:last-child {
+  border-bottom: none !important;
+}
+
+/* Edges: Thick and Blocky */
+[data-skin="pixel"] .react-flow__edge-path {
+  stroke: black;
+  stroke-width: 3px;
+  stroke-dasharray: 8 8; /* Dashed line for retro feel */
+  shape-rendering: crispEdges; /* No anti-aliasing */
+  filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.2));
+}
+
+/* General UI Elements inside Pixel Skin */
+[data-skin="pixel"] button:not(.react-flow__controls-button),
+[data-skin="pixel"] input,
+[data-skin="pixel"] [role="dialog"],
+[data-skin="pixel"] .bg-card {
+  border-radius: 0px !important;
+  border: 2px solid black !important;
+  box-shadow: 4px 4px 0px black !important;
+  font-family: var(--font-pixel), monospace;
+}
+
+[data-skin="pixel"] [role="dialog"] {
+    border-width: 4px !important;
+}
+
+/* Sidebar tabs in Pixel skin */
+[data-skin="pixel"] [role="tablist"] {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+[data-skin="pixel"] [role="tab"] {
+    border: 2px solid black !important;
+    margin-right: -2px; /* Connect them */
+    background: white;
+    box-shadow: none !important;
+    border-bottom: none !important;
+}
+
+[data-skin="pixel"] [role="tab"][data-state="active"] {
+    background: var(--primary) !important;
+    color: black !important;
+    margin-top: -4px;
+    padding-bottom: 8px; /* Pop up effect */
+}
+
+/* Quest Scroll Skin Overrides */
+[data-skin="quest"] body {
+  font-family: var(--font-fantasy), serif;
+  background-color: #F4E4BC; /* Parchment Base */
+  background-image: 
+    radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.1) 100%),
+    repeating-linear-gradient(45deg, rgba(74, 59, 42, 0.02) 0px, rgba(74, 59, 42, 0.02) 2px, transparent 2px, transparent 4px);
+  color: #4A3B2A; /* Ink */
+}
+
+[data-skin="quest"] .react-flow__node {
+  border-radius: 8px !important;
+  border: 4px double #4A3B2A !important;
+  background-color: #F9F0DB !important; /* Lighter parchment */
+  box-shadow: 2px 2px 4px rgba(74, 59, 42, 0.3) !important;
+  font-family: var(--font-fantasy), serif;
+}
+
+[data-skin="quest"] .react-flow__node * {
+  color: #4A3B2A !important;
+  font-weight: bold;
+}
+
+[data-skin="quest"] .react-flow__node.selected {
+  border-color: #8B0000 !important; /* Wax Red */
+  box-shadow: 0 0 10px rgba(139, 0, 0, 0.5) !important;
+}
+
+/* Edges: Travel Route */
+[data-skin="quest"] .react-flow__edge-path {
+  stroke: #4A3B2A;
+  stroke-width: 3px;
+  stroke-dasharray: 10 5;
+  filter: drop-shadow(1px 1px 0px rgba(255, 255, 255, 0.5));
+}
+
+/* Controls: Wax Seals */
+[data-skin="quest"] .react-flow__controls {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+[data-skin="quest"] .react-flow__controls-button {
+  background-color: #8B0000 !important; /* Red Wax */
+  border: 2px solid #500000 !important;
+  border-radius: 50% !important;
+  width: 30px;
+  height: 30px;
+  margin-bottom: 5px;
+  box-shadow: inset 2px 2px 5px rgba(255, 255, 255, 0.2), 2px 2px 5px rgba(0,0,0,0.4) !important;
+  color: #F4E4BC !important;
+  fill: #F4E4BC !important;
+}
+
+[data-skin="quest"] .react-flow__controls-button svg {
+  fill: #F4E4BC !important;
+}
+
+[data-skin="quest"] .react-flow__controls-button:hover {
+  background-color: #A00000 !important;
+}
+
+/* Sidebar & General UI */
+[data-skin="quest"] .bg-card, 
+[data-skin="quest"] [role="dialog"] {
+  background-color: #F4E4BC !important;
+  border: 2px solid #4A3B2A !important;
+  background-image: repeating-linear-gradient(45deg, rgba(74, 59, 42, 0.02) 0px, transparent 2px);
+}
+
+[data-skin="quest"] button:not(.react-flow__controls-button) {
+  font-family: var(--font-fantasy), serif;
+  border: 2px solid #4A3B2A;
+  box-shadow: 2px 2px 0px #4A3B2A;
+}
