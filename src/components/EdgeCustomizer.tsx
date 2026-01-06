@@ -3,7 +3,7 @@
 import { useTaskStore } from '@/store/useTaskStore';
 import { Button } from '@/components/ui/button';
 import { Edge } from '@xyflow/react';
-import { X, Minus, MoreHorizontal } from 'lucide-react';
+import { X, Minus, MoreHorizontal, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface EdgeCustomizerProps {
@@ -29,6 +29,7 @@ export function EdgeCustomizer({ edgeId, onClose }: EdgeCustomizerProps) {
   const pages = useTaskStore((state) => state.pages);
   const activePageId = useTaskStore((state) => state.activePageId);
   const updateEdge = useTaskStore((state) => state.updateEdge);
+  const onEdgesChange = useTaskStore((state) => state.onEdgesChange);
   
   const activePage = pages.find(p => p.id === activePageId);
   const edge = activePage?.edges.find(e => e.id === edgeId);
@@ -44,6 +45,11 @@ export function EdgeCustomizer({ edgeId, onClose }: EdgeCustomizerProps) {
 
   const handleStyleChange = (dash: string) => {
     updateEdge(edgeId, { style: { ...edge.style, strokeDasharray: dash } });
+  };
+
+  const handleDelete = () => {
+      onEdgesChange([{ id: edgeId, type: 'remove' }]);
+      onClose();
   };
 
   return (
@@ -99,6 +105,18 @@ export function EdgeCustomizer({ edgeId, onClose }: EdgeCustomizerProps) {
                 </button>
              ))}
            </div>
+        </div>
+
+        <div className="pt-2 border-t">
+            <Button 
+                variant="destructive" 
+                size="sm" 
+                className="w-full h-8 flex items-center justify-center gap-2"
+                onClick={handleDelete}
+            >
+                <Trash2 className="w-3 h-3" />
+                Delete Connection
+            </Button>
         </div>
       </div>
     </div>
