@@ -1,12 +1,12 @@
+import { SidePanel } from '@/components/SidePanel';
 import { TaskTreeCanvas } from '@/components/TaskTreeCanvas';
-import { NextActionList } from '@/components/NextActionList';
 import { SkinSwitcher } from '@/components/SkinSwitcher';
 
 export default function Home() {
   return (
     <main className="flex h-screen w-full bg-background text-foreground overflow-hidden">
-      {/* Sidebar - Next Actions */}
-      <NextActionList />
+      {/* Sidebar - Tabs */}
+      <SidePanel />
 
       {/* Main Canvas */}
       <div className="flex-1 relative">

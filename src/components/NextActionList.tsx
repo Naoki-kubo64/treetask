@@ -14,7 +14,7 @@ export function NextActionList() {
   const nextActions = findNextActions(nodes, edges);
 
   return (
-    <div className="w-80 border-l bg-card/50 backdrop-blur-sm h-full flex flex-col shadow-xl z-10">
+    <div className="flex flex-col h-full">
       <div className="p-4 border-b">
         <h2 className="font-semibold text-lg flex items-center gap-2">
           Next Actions

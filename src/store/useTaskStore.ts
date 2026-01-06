@@ -12,10 +12,17 @@ import {
 } from '@xyflow/react';
 import { Skin } from '@/lib/skins';
 
+export interface TaskType {
+  id: string;
+  name: string;
+  color: string;
+}
+
 export interface TaskData {
   label: string;
   status: 'pending' | 'completed';
   description?: string;
+  typeId?: string;
   [key: string]: unknown;
 }
 
@@ -36,6 +43,13 @@ interface TaskState {
   updateNodeData: (id: string, data: Partial<TaskData>) => void;
   toggleNodeStatus: (id: string) => void;
   deleteNode: (id: string) => void;
+  
+  taskTypes: TaskType[];
+  activeTypeId: string; // The type newly created tasks will use
+  addTaskType: (type: TaskType) => void;
+  updateTaskType: (id: string, type: Partial<TaskType>) => void;
+  deleteTaskType: (id: string) => void;
+  setActiveTypeId: (id: string) => void;
 }
 
 const initialNodes: TaskNode[] = [
@@ -52,6 +66,13 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   nodes: initialNodes,
   edges: [],
   skin: 'refined',
+  
+  taskTypes: [
+    { id: 'default', name: 'Task', color: 'hsl(var(--primary))' },
+    { id: 'goal', name: 'Goal', color: '#ef4444' }, // red-500
+    { id: 'memo', name: 'Memo', color: '#f59e0b' }, // amber-500
+  ],
+  activeTypeId: 'default',
 
   onNodesChange: (changes) => {
     set({
@@ -101,4 +122,18 @@ export const useTaskStore = create<TaskState>((set, get) => ({
           nodes: state.nodes.filter(n => n.id !== id),
           edges: state.edges.filter(e => e.source !== id && e.target !== id)
       })),
+
+  addTaskType: (type) => set((state) => ({ taskTypes: [...state.taskTypes, type] })),
+  
+  updateTaskType: (id, type) => set((state) => ({
+      taskTypes: state.taskTypes.map(t => t.id === id ? { ...t, ...type } : t)
+  })),
+  
+  deleteTaskType: (id) => set((state) => ({
+      taskTypes: state.taskTypes.filter(t => t.id !== id),
+      // Optionally reset typeId of nodes that had this type?
+      // For now let's keep it simple.
+  })),
+  
+  setActiveTypeId: (id) => set({ activeTypeId: id }),
 }));

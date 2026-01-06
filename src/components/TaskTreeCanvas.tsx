@@ -13,7 +13,8 @@ import '@xyflow/react/dist/style.css';
 
 import { useTaskStore } from '@/store/useTaskStore';
 import { TaskNode } from './TaskNode';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
+import { Lock, Unlock } from 'lucide-react';
 
 const nodeTypes = {
   task: TaskNode,
@@ -28,6 +29,9 @@ export function TaskTreeCanvas() {
   const addNode = useTaskStore((state) => state.addNode);
   const addEdge = useTaskStore((state) => state.addEdge);
   const deleteNode = useTaskStore((state) => state.deleteNode);
+  const activeTypeId = useTaskStore((state) => state.activeTypeId);
+
+  const [isLocked, setIsLocked] = useState(false);
 
   const handleAddNode = useCallback(() => {
      // Find selected node
@@ -44,7 +48,7 @@ export function TaskTreeCanvas() {
                  x: selectedNode.position.x + 250, 
                  y: selectedNode.position.y 
              },
-             data: { label: 'Sub Task', status: 'pending' as const },
+             data: { label: 'Sub Task', status: 'pending' as const, typeId: activeTypeId },
              selected: true, // Auto-select new node
          };
          
@@ -64,11 +68,11 @@ export function TaskTreeCanvas() {
              id,
              type: 'task',
              position: { x: Math.random() * 200 + 100, y: Math.random() * 200 + 100 },
-             data: { label: 'New Task', status: 'pending' as const },
+             data: { label: 'New Task', status: 'pending' as const, typeId: activeTypeId },
              selected: true,
          });
      }
-  }, [nodes, addNode, addEdge]);
+  }, [nodes, addNode, addEdge, activeTypeId]);
   
   const handleDeleteSelected = useCallback(() => {
       const selectedNodes = nodes.filter(n => n.selected);
@@ -95,12 +99,25 @@ export function TaskTreeCanvas() {
         nodeTypes={nodeTypes}
         fitView
         deleteKeyCode={['Backspace', 'Delete']}
+        panOnDrag={!isLocked}
+        zoomOnScroll={!isLocked}
+        zoomOnPinch={!isLocked}
+        panOnScroll={!isLocked}
+        nodesDraggable={!isLocked}
       >
         <Background />
         <Controls />
         <MiniMap zoomable pannable className='!bg-card !border-border' nodeColor={() => 'hsl(var(--primary))'} />
         
         <Panel position="top-left" className="bg-card/80 backdrop-blur p-2 rounded-lg border shadow-sm flex gap-2">
+          <button
+             onClick={() => setIsLocked(!isLocked)}
+             className="px-2 py-1.5 text-muted-foreground hover:text-primary transition-colors"
+             title={isLocked ? "Unlock Viewport" : "Lock Viewport"}
+          >
+             {isLocked ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
+          </button>
+          <div className="w-px bg-border my-1" />
           <button 
              onClick={handleAddNode}
              className="px-3 py-1.5 text-xs font-medium bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity"
