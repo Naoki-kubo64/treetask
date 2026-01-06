@@ -51,6 +51,10 @@ interface TaskState {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
 
+  // Dragging State
+  isDragging: boolean;
+  setIsDragging: (isDragging: boolean) => void;
+
   // Actions
   onNodesChange: OnNodesChange<TaskNode>;
   onEdgesChange: OnEdgesChange;
@@ -91,8 +95,8 @@ const initialNodes: TaskNode[] = [
   },
 ];
 
-export const useTaskStore = create<TaskState>()(temporal(persist((set, get) => ({
-  skin: 'refined',
+export const useTaskStore = create<TaskState>()(persist(temporal((set, get) => ({
+  skin: 'frost',
   taskTypes: [
     { id: 'default', name: 'Task', color: 'hsl(var(--primary))' },
     { id: 'goal', name: 'Goal', color: '#ef4444' }, 
@@ -265,6 +269,14 @@ export const useTaskStore = create<TaskState>()(temporal(persist((set, get) => (
   searchQuery: '',
   setSearchQuery: (query) => set({ searchQuery: query }),
 
+  isDragging: false,
+  setIsDragging: (isDragging) => set({ isDragging }),
+
+}), {
+    equality: (past, current) => {
+        if (past.isDragging) return true;
+        return past === current; 
+    }
 }), {
     name: 'startree-storage',
     partialize: (state) => ({ 
@@ -274,4 +286,4 @@ export const useTaskStore = create<TaskState>()(temporal(persist((set, get) => (
         pages: state.pages,
         activePageId: state.activePageId
     }),
-})));
+}));

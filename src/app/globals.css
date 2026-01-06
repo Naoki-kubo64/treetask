@@ -115,6 +115,64 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+[data-skin="frost"] body {
+  /* Radial Gradient Background */
+  background: radial-gradient(circle at center, hsl(222, 47%, 20%) 0%, hsl(222, 47%, 11%) 100%);
+  font-family: var(--font-mono); /* Use monospace for sci-fi feel */
+  background-attachment: fixed; /* Prevent scroll clip */
+  color: var(--foreground);
+}
+
+/* Frost Skin Specific Component Overrides */
+[data-skin="frost"] .react-flow__node {
+  border-radius: 24px !important; /* Rounded Rect for better text fit */
+  box-shadow: 0 0 15px var(--primary), inset 0 0 20px rgba(0, 0, 0, 0.5); /* Glow + Depth */
+  border: 2px solid var(--primary);
+  background-color: rgba(30, 41, 59, 0.95); /* Dark Slate, opaque */
+}
+
+[data-skin="frost"] .react-flow__node * {
+  text-shadow: 0 0 2px black; /* Improve text readability */
+  font-weight: 500;
+  color: white !important;
+}
+
+[data-skin="frost"] .react-flow__edge-path {
+  stroke: var(--primary);
+  stroke-width: 2px;
+  filter: drop-shadow(0 0 5px var(--primary));
+}
+
+[data-skin="frost"] .react-flow__controls {
+  box-shadow: 0 0 10px var(--primary) !important;
+  border: 1px solid var(--primary) !important;
+  background-color: var(--card) !important; /* Dark background */
+  overflow: hidden;
+}
+
+[data-skin="frost"] .react-flow__controls-button {
+  background-color: transparent !important;
+  border-bottom: 1px solid var(--primary) !important;
+  fill: var(--primary) !important; 
+  color: var(--primary) !important;
+}
+
+[data-skin="frost"] .react-flow__controls-button:last-child {
+  border-bottom: none !important;
+}
+
+[data-skin="frost"] .react-flow__controls-button:hover {
+  background-color: var(--primary-foreground) !important; 
+}
+
+[data-skin="frost"] .react-flow__controls-button svg {
+  fill: var(--primary) !important;
+}
+
+[data-skin="frost"] .react-flow__controls-button svg path {
+  fill: var(--primary) !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

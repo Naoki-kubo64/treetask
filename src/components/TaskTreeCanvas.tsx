@@ -38,6 +38,7 @@ export function TaskTreeCanvas() {
   const addEdge = useTaskStore((state) => state.addEdge);
   const deleteNode = useTaskStore((state) => state.deleteNode);
   const activeTypeId = useTaskStore((state) => state.activeTypeId);
+  const setIsDragging = useTaskStore((state) => state.setIsDragging);
 
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
 
@@ -136,7 +137,13 @@ export function TaskTreeCanvas() {
   }, [nodes, edges, handleAddNode]);
 
   // Drag & Drop Reparenting
+  const onNodeDragStart = useCallback(() => {
+    setIsDragging(true);
+  }, [setIsDragging]);
+
   const onNodeDragStop = useCallback((event: React.MouseEvent, node: TaskNodeType) => { // Use Node type
+      setIsDragging(false);
+      
       // Check collision with other nodes
       const targetNode = nodes.find(n =>
           n.id !== node.id &&
@@ -223,6 +230,7 @@ export function TaskTreeCanvas() {
         onEdgeClick={onEdgeClick}
         onPaneClick={onPaneClick}
         onKeyDown={onKeyDown}
+        onNodeDragStart={onNodeDragStart}
         onNodeDragStop={onNodeDragStop}
         nodeTypes={nodeTypes}
         defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}

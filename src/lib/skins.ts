@@ -1,4 +1,4 @@
-export type Skin = "refined" | "minimal" | "nature";
+export type Skin = "refined" | "minimal" | "nature" | "frost";
 
 export interface SkinConfig {
   name: string;
@@ -79,6 +79,31 @@ export const skins: Record<Skin, SkinConfig> = {
       "--input": "28 15% 85%",
       "--ring": "142 30% 35%",
       "--radius": "1rem",
+    },
+  },
+  frost: {
+    name: "Frost (Game)",
+    variables: {
+      "--background": "hsl(222 47% 8%)",
+      "--foreground": "hsl(0 0% 100%)",
+      "--card": "hsl(217 33% 20%)",
+      "--card-foreground": "hsl(0 0% 100%)",
+      "--popover": "hsl(222 47% 10%)",
+      "--popover-foreground": "hsl(0 0% 100%)",
+      "--primary": "hsl(186 100% 50%)",
+      "--primary-foreground": "hsl(222 47% 11%)",
+      "--secondary": "hsl(217 33% 25%)",
+      "--secondary-foreground": "hsl(0 0% 100%)",
+      "--muted": "hsl(217 33% 25%)",
+      "--muted-foreground": "hsl(215 20% 80%)",
+      "--accent": "hsl(186 100% 50%)",
+      "--accent-foreground": "hsl(222 47% 11%)",
+      "--destructive": "hsl(0 80% 60%)",
+      "--destructive-foreground": "hsl(0 0% 100%)",
+      "--border": "hsl(186 100% 30%)",
+      "--input": "hsl(217 33% 25%)",
+      "--ring": "hsl(186 100% 50%)",
+      "--radius": "1.5rem",
     },
   },
 };
