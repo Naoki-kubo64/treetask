@@ -15,6 +15,7 @@ import { useTaskStore, TaskNode as TaskNodeType } from '@/store/useTaskStore';
 import { TaskNode } from './TaskNode';
 import { useCallback, useState } from 'react';
 import { EdgeCustomizer } from './EdgeCustomizer';
+import { HistoryControls } from './HistoryControls';
 import { Edge, Connection } from '@xyflow/react';
 
 const nodeTypes = {
@@ -241,6 +242,10 @@ export function TaskTreeCanvas() {
                onClose={() => setSelectedEdgeId(null)} 
             />
         )}
+
+        <Panel position="top-right">
+            <HistoryControls />
+        </Panel>
 
         <Panel position="top-left" className="bg-card/80 backdrop-blur p-2 rounded-lg border shadow-sm flex gap-2">
           <button 

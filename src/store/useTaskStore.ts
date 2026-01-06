@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { temporal } from 'zundo';
 import { 
   Edge, 
   Node, 
@@ -45,6 +46,10 @@ interface TaskState {
   // Page State
   pages: Page[];
   activePageId: string;
+  
+  // Search State
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
 
   // Actions
   onNodesChange: OnNodesChange<TaskNode>;
@@ -86,7 +91,7 @@ const initialNodes: TaskNode[] = [
   },
 ];
 
-export const useTaskStore = create<TaskState>()(persist((set, get) => ({
+export const useTaskStore = create<TaskState>()(temporal(persist((set, get) => ({
   skin: 'refined',
   taskTypes: [
     { id: 'default', name: 'Task', color: 'hsl(var(--primary))' },
@@ -256,6 +261,10 @@ export const useTaskStore = create<TaskState>()(persist((set, get) => ({
       pages: data.pages,
       activePageId: data.activePageId
   }),
+  
+  searchQuery: '',
+  setSearchQuery: (query) => set({ searchQuery: query }),
+
 }), {
     name: 'startree-storage',
     partialize: (state) => ({ 
@@ -265,4 +274,4 @@ export const useTaskStore = create<TaskState>()(persist((set, get) => ({
         pages: state.pages,
         activePageId: state.activePageId
     }),
-}));
+})));

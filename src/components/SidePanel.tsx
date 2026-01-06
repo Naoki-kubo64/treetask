@@ -4,7 +4,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { NextActionList } from "./NextActionList";
 import { PageManager } from "./PageManager";
 import { TaskDetailPanel } from "./TaskDetailPanel";
-import { ListTodo, StickyNote, Info } from "lucide-react";
+import { ListTodo, StickyNote, Info, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { useTaskStore } from "@/store/useTaskStore";
 
 export function SidePanel() {
   return (
@@ -27,7 +29,18 @@ export function SidePanel() {
            </TabsList>
         </div>
         
-        <TabsContent value="actions" className="flex-1 m-0 overflow-hidden">
+        <TabsContent value="actions" className="flex-1 m-0 overflow-hidden flex flex-col">
+           <div className="p-4 pb-0">
+             <div className="relative">
+               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+               <Input
+                 type="search"
+                 placeholder="Search tasks..."
+                 className="pl-9 h-9"
+                 onChange={(e) => useTaskStore.setState({ searchQuery: e.target.value })}
+               />
+             </div>
+           </div>
            <NextActionList />
         </TabsContent>
         

@@ -12,6 +12,7 @@ export function TaskNode({ id, data, selected }: NodeProps<TaskNodeType>) {
   const toggleNodeStatus = useTaskStore((state) => state.toggleNodeStatus);
   const updateNodeData = useTaskStore((state) => state.updateNodeData);
   const taskTypes = useTaskStore((state) => state.taskTypes);
+  const searchQuery = useTaskStore((state) => state.searchQuery);
   
   const [isEditing, setIsEditing] = useState(false);
   const [editLabel, setEditLabel] = useState(data.label);
@@ -45,6 +46,8 @@ export function TaskNode({ id, data, selected }: NodeProps<TaskNodeType>) {
   const typeColor = currentType?.color || 'hsl(var(--primary))';
   
   const isCompleted = data.status === 'completed';
+  const isMatch = searchQuery && data.label.toLowerCase().includes(searchQuery.toLowerCase());
+  const isDimmed = searchQuery && !isMatch;
 
   return (
     <motion.div
@@ -54,7 +57,9 @@ export function TaskNode({ id, data, selected }: NodeProps<TaskNodeType>) {
       className={cn(
         "group relative min-w-[50px] h-full rounded-xl border bg-card px-4 py-3 shadow-sm transition-shadow",
         selected && "ring-2",
-        isCompleted && "opacity-60 grayscale"
+        isCompleted && "opacity-60 grayscale",
+        isMatch && "ring-2 ring-yellow-400 bg-yellow-50/50",
+        isDimmed && "opacity-30"
       )}
       style={{
           borderLeftColor: typeColor,
