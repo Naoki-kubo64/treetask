@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { 
   Edge, 
   Node, 
@@ -71,6 +72,7 @@ interface TaskState {
   deletePage: (id: string) => void;
   setActivePage: (id: string) => void;
   updatePageName: (id: string, name: string) => void;
+  importData: (data: TaskState) => void;
 }
 
 const initialPageId = 'page-1';
@@ -84,7 +86,7 @@ const initialNodes: TaskNode[] = [
   },
 ];
 
-export const useTaskStore = create<TaskState>((set, get) => ({
+export const useTaskStore = create<TaskState>()(persist((set, get) => ({
   skin: 'refined',
   taskTypes: [
     { id: 'default', name: 'Task', color: 'hsl(var(--primary))' },
@@ -246,4 +248,21 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   updatePageName: (id, name) => set(state => ({
       pages: state.pages.map(p => p.id === id ? { ...p, name } : p)
   })),
+
+  importData: (data) => set({
+      skin: data.skin,
+      taskTypes: data.taskTypes,
+      activeTypeId: data.activeTypeId,
+      pages: data.pages,
+      activePageId: data.activePageId
+  }),
+}), {
+    name: 'startree-storage',
+    partialize: (state) => ({ 
+        skin: state.skin,
+        taskTypes: state.taskTypes,
+        activeTypeId: state.activeTypeId,
+        pages: state.pages,
+        activePageId: state.activePageId
+    }),
 }));
